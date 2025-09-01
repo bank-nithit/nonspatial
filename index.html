@@ -408,13 +408,13 @@
         // Task parameters
         const maxStimSize = 300;
         const minStimSize = 60;
-        const setStepSize = { low: 1.4, med: 1.45, high: 1.5 };
-        const setChoiceSize = { near: 1.2, far: 1.3 };
+        const setStepSize = { low: 1.5, med: 1.55, high: 1.6 };
+        const setChoiceSize = { near: 1.3, far: 1.4 };
         const setChoiceEst = { under: -1, over: 1 };
         const setStepOri = { low: 40, med: 45, high: 50 };
         const setChoiceOri = { near: 25, far: 35 };
         const setStepDist = { low: 30, med: 40, high: 50 };
-        const setChoiceDist = { near: 0.5, far: 0.75 };
+        const setChoiceDist = { near: 0.5, far: 0.8 };
         
         // Utility functions
         function randint(min, max) {
@@ -433,14 +433,14 @@
             return array;
         }
         
-        function createPie(container, radius, startAngle, position) {
+        function createPie(container, radius, orientation, position) {
             const pie = document.createElement('div');
             pie.className = 'stimulus pie';
             pie.style.width = radius * 2 + 'px';
             pie.style.height = radius * 2 + 'px';
             pie.style.left = (position[0] - radius) + 'px';
             pie.style.top = (position[1] - radius) + 'px';
-            pie.style.transform = `rotate(${startAngle}deg)`;
+            pie.style.transform = `rotate(${orientation}deg)`;
             container.appendChild(pie);
             return pie;
         }
@@ -619,16 +619,14 @@
                 const foilOri = stimOri;
                 
                 // Randomize positions (matching Python coordinates)
-                const positions = [[-367.5, 478], [367.5, 478]]; // -0.5*screen_w/2 and 0.5*screen_w/2
+                const positions = [[-367.5, "z"], [367.5, "x"]]; // -0.5*screen_w/2 and 0.5*screen_w/2
                 shuffle(positions);
                 
                 // Show choice
                 const choice = await showChoice(stimR[3], stimOri, foilR, foilOri, positions);
                 
                 // Determine if correct
-                const isCorrect = (choice === 'z' && positions[0][0] === -367.5) || 
-                                  (choice === 'x' && positions[0][0] === 367.5);
-                                //  (choice === 'x' && positions[1][0] === 367.5);
+                const isCorrect = (choice === positions[0][1]);
                 
                 await showFeedback(isCorrect, 500);
                 
@@ -664,15 +662,14 @@
                 const foilOri = (stimOri[3] + choiceDeviate * choiceDir) % 360;
                 
                 // Randomize positions (matching Python coordinates)
-                const positions = [[-367.5, 478], [367.5, 478]]; // -0.5*screen_w/2 and 0.5*screen_w/2
+                const positions = [[-367.5, "z"], [367.5, "x"]];
                 shuffle(positions);
                 
                 // Show choice
                 const choice = await showChoice(stimR, stimOri[3], foilR, foilOri, positions);
                 
                 // Determine if correct
-                const isCorrect = (choice === 'z' && positions[0][0] === -367.5) || 
-                                 (choice === 'x' && positions[1][0] === 367.5);
+                const isCorrect = (choice === positions[0][1]);
                 
                 await showFeedback(isCorrect, 500);
                 
@@ -726,8 +723,8 @@
                     sizeSteps.push(Math.abs(size[i + 1] - size[i]));
                 }
                 
-                if (sizeSteps.every(delta => delta >= 10) && 
-                    size.every(y => 60 <= y && y <= 300)) {
+                if (sizeSteps.every(delta => delta >= 15) && 
+                    size.every(y => 60 <= y && y <= 260)) {
                     return [m, c, size.map((s, i) => [s, orientation[i]])];
                 }
             }
@@ -795,16 +792,14 @@
             const foilR = Math.exp(foilLogRadius);
             
             // Randomize positions (matching Python coordinates)
-            const positions = [[-367.5, 478], [367.5, 478]]; // -0.5*screen_w/2 and 0.5*screen_w/2
+            const positions = [[-367.5, "z"], [367.5, "x"]]; // -0.5*screen_w/2 and 0.5*screen_w/2
             shuffle(positions);
             
             // Show choice
             const choice = await showChoice(currStimR[3], currStimOri[3], foilR, foilOri, positions);
             
             // Determine if correct
-            const isCorrect = (choice === 'z' && positions[0][0] === -367.5) || 
-                              (choice === 'x' && positions[0][0] === 367.5);
-                            //  (choice === 'x' && positions[1][0] === 367.5);
+            const isCorrect = (choice === positions[0][1]); 
             
             await showFeedback(isCorrect, 500);
             
@@ -859,13 +854,12 @@
             // Demo choice (correct vs incorrect)
             const correctRadius = 160;
             const incorrectRadius = 180;
-            const positions = [[-367.5, 478], [367.5, 478]];
+            const positions = [[-367.5, "z"], [367.5, "x"]];
             
             const choice = await showChoice(correctRadius, demoOri, incorrectRadius, demoOri, positions);
             
             // Show feedback
-            const isCorrect = (choice === 'z' && positions[0][0] === -367.5) || 
-                             (choice === 'x' && positions[0][0] === 367.5);
+            const isCorrect = (choice === positions[0][1]); 
             
             await showFeedback(isCorrect, 1000);
             
